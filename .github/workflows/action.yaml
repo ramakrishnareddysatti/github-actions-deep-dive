@@ -5,3 +5,29 @@ on:
    branches:
     - main
   
+jobs:
+ build:
+   runs-on: ubuntu-latest
+   steps:
+     - name: check out code
+       uses: actions/checkout@v3
+     - name: Set up pyhton
+       uses: actions/setup-python@v4
+       with:
+         python-version: 3.8
+     - name: Install Libraries
+       run: |
+           cd function
+           python -m pip install --upgrade pip
+           if [ -f requirements.txt ]; then pip install -r requirements.txt -t .; fi
+     - name: create zip bundle
+       run: |
+            cd function
+            zip -r ../${{ github.sha }}.zip .
+     - name: Archive artifact
+       uses: actions/upload-artifact@v3
+       with: 
+         name: zipped-bundle
+         path: ${{ github.sha }}.zip
+            
+      
